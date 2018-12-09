@@ -1,0 +1,8 @@
+[package]
+name = "bar"
+version = "0.1.0"
+authors = ["Wesley Moore <wes@wezm.net>"]
+
+[dependencies]
+unixbar = { git = "https://github.com/wezm/unixbar.git", branch = "awesome", features = ["awesome"] }
+systemstat = "0.1"
