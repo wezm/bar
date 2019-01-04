@@ -2,7 +2,14 @@
 name = "bar"
 version = "0.1.0"
 authors = ["Wesley Moore <wes@wezm.net>"]
+edition = "2018"
 
 [dependencies]
-unixbar = { git = "https://github.com/wezm/unixbar.git", branch = "awesome", features = ["awesome"] }
+futures = "0.1"
+hyper = "<= 1.0"
+hyper-rustls = "<= 1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 systemstat = "0.1"
+tokio = "<= 1.0"
+unixbar = { git = "https://github.com/wezm/unixbar.git", branch = "awesome", features = ["awesome"] }
