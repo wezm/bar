@@ -153,13 +153,13 @@ fn main() {
 pub fn format_observation(observation: &Option<Observation>) -> String {
     if let Some(o) = observation {
         format!(
-            "{}°C feels like {}°C   Rain since 9am: {}mm   {}% humidity",
+            "{}°C ({}°C)  {}mm  {}%",
             o.air_temp, o.apparent_t, o.rain_trace, o.rel_hum
         )
     } else {
         let default = "--";
         format!(
-            "{}°C feels like {}°C   Rain since 9am: {}mm   {}% humidity",
+            "{}°C ({}°C)  {}mm  {}%",
             default, default, default, default
         )
     }
