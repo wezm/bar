@@ -70,8 +70,8 @@ fn main() {
                     bfmt![ pad[1] fmt["{} {}%", symbol, (battery.remaining_capacity * 100.).round() as i32]],
                 (Ok(symbol), Err(_)) =>
                     bfmt![ pad[1] text[symbol]],
-                (Err(_), _) =>
-                    bfmt![fg["#bb1155"] pad[1] text["error"]],
+                (Err(err), _) =>
+                    bfmt![fg["#bb1155"] pad[1] text[err.to_string()]],
             }}
         ));
     }
