@@ -1,14 +1,9 @@
-use futures::{Future, Stream};
-use hyper::Client as HyperClient;
-use hyper_rustls::HttpsConnector;
 use serde::Deserialize;
+use std::io;
 
-const DNS_WORKER_THREADS: usize = 4;
 const OBSERVATIONS_URL: &str = "http://reg.bom.gov.au/fwo/IDV60901/IDV60901.95936.json";
 
-pub struct Client {
-    hyper: HyperClient<HttpsConnector<hyper::client::HttpConnector>, hyper::Body>,
-}
+pub struct Client {}
 
 #[derive(Debug, Deserialize)]
 struct ObservationsRaw {
@@ -70,24 +65,8 @@ pub struct Observation {
 
 #[derive(Debug)]
 pub enum WeatherError {
-    // #[fail(display = "I/O error")]
-    // IoError(io::Error),
-    HttpError(hyper::Error),
-    // #[fail(display = "UTF-8 parse error")]
-    // ParseError(str::Utf8Error),
-    JsonError(serde_json::Error),
-}
-
-impl From<serde_json::Error> for WeatherError {
-    fn from(err: serde_json::Error) -> Self {
-        WeatherError::JsonError(err)
-    }
-}
-
-impl From<hyper::Error> for WeatherError {
-    fn from(err: hyper::Error) -> Self {
-        WeatherError::HttpError(err)
-    }
+    HttpError,
+    JsonError(io::Error),
 }
 
 //ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10450.xml
@@ -95,24 +74,20 @@ impl From<hyper::Error> for WeatherError {
 
 impl Client {
     pub fn new() -> Self {
-        let https = HttpsConnector::new(DNS_WORKER_THREADS);
-        let client: HyperClient<_, hyper::Body> = HyperClient::builder().build(https);
-
-        Client { hyper: client }
+        Client {}
     }
 
-    pub fn observations(&self) -> impl Future<Item = Vec<Observation>, Error = WeatherError> {
-        futures::future::ok(self.hyper.clone())
-            .and_then(|client| {
-                client.get(OBSERVATIONS_URL.parse().unwrap())
-                // let mut request = Request::get(OBSERVATIONS_URL);
-                // client.request(request.body(Body::empty()))
-            })
-            .and_then(|res| res.into_body().concat2())
-            .map_err(WeatherError::from)
-            .and_then(|body| {
-                serde_json::from_slice::<ObservationsRaw>(&body).map_err(WeatherError::from)
-            })
-            .and_then(|obs| futures::future::ok(obs.observations.data))
+    pub fn observations(&self) -> Result<Vec<Observation>, WeatherError> {
+        let resp = ureq::get(OBSERVATIONS_URL)
+            .timeout(std::time::Duration::from_secs(10))
+            .call();
+
+        if resp.ok() {
+            resp.into_json_deserialize::<ObservationsRaw>()
+                .map(|obs| obs.observations.data)
+                .map_err(WeatherError::JsonError)
+        } else {
+            Err(WeatherError::HttpError)
+        }
     }
 }

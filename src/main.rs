@@ -10,6 +10,7 @@ struct Config {
     audio: bool,
     battery: bool,
     weather: bool,
+    cpu_temp: bool,
 }
 
 impl Default for Config {
@@ -18,6 +19,7 @@ impl Default for Config {
             audio: false,
             battery: false,
             weather: false,
+            cpu_temp: false,
         }
     }
 }
@@ -31,6 +33,7 @@ impl Config {
                 "-a" => config.audio = true,
                 "-b" => config.battery = true,
                 "-w" => config.weather = true,
+                "-c" => config.cpu_temp = true,
                 _ => (),
             }
         }
@@ -78,17 +81,25 @@ fn main() {
 
     if config.weather {
         bar.add(Periodic::new(Duration::from_secs(5 * 60), || {
-            let mut rt = tokio::runtime::Runtime::new().unwrap();
             let weather = weather::Client::new();
 
-            let future_observations = weather.observations();
-            let observation = rt
-                .block_on(future_observations)
+            let observation = weather
+                .observations()
                 .ok()
                 .and_then(|observations| observations.into_iter().nth(0));
 
             bfmt![ pad[1] fmt["{}", format_observation(&observation)]]
         }));
+    }
+
+    if config.cpu_temp {
+        bar.add(Periodic::new(
+            Duration::from_secs(5),
+            || match System::new().cpu_temp() {
+                Ok(temp) => bfmt![pad[1] fmt["{}°C", temp]],
+                Err(_) => bfmt![fg["#bb1155"] pad[1] text["cpu temp error"]],
+            },
+        ));
     }
 
     //     .register_fn("prev", move || { MPRISMusic::new().prev(); })
@@ -157,10 +168,6 @@ pub fn format_observation(observation: &Option<Observation>) -> String {
             o.air_temp, o.apparent_t, o.rain_trace, o.rel_hum
         )
     } else {
-        let default = "--";
-        format!(
-            "{}°C ({}°C)  {}mm  {}%",
-            default, default, default, default
-        )
+        format!("{default}°C ({default}°C)  {default}mm  {default}%", default="--")
     }
 }
