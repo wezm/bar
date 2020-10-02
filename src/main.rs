@@ -54,11 +54,11 @@ fn main() {
             } else {
                 let volume = (volume.volume * 100.).round() as i32;
                 if volume < 1 {
-                    bfmt![fmt["🔈 {}", volume]]
-                } else if volume < 50 {
-                    bfmt![fmt["🔉 {}", volume]]
+                    bfmt![fmt["🔈{}", volume]]
+                } else if volume < 25 {
+                    bfmt![fmt["🔉{}", volume]]
                 } else {
-                    bfmt![fmt["🔊 {}", volume]]
+                    bfmt![fmt["🔊 {}", volume]]
                 }
             }
         }));
