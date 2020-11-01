@@ -52,9 +52,9 @@ pub struct Observation {
     pub gust_kt: u32,
     pub air_temp: f64,
     pub dewpt: f64,
-    pub press: f64,
-    pub press_qnh: f64,
-    pub press_msl: f64,
+    pub press: Option<f64>,
+    pub press_qnh: Option<f64>,
+    pub press_msl: Option<f64>,
     pub press_tend: String,
     pub rain_trace: String, // Rain since 9am, not sure why this is a string
     pub rel_hum: u32,
