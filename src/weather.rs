@@ -1,7 +1,10 @@
 use serde::Deserialize;
 use std::io;
 
-const OBSERVATIONS_URL: &str = "http://reg.bom.gov.au/fwo/IDV60901/IDV60901.95936.json";
+// Melbourne
+// const OBSERVATIONS_URL: &str = "http://reg.bom.gov.au/fwo/IDV60901/IDV60901.95936.json";
+// Sunshine Coast Airport http://www.bom.gov.au/products/IDQ60901/IDQ60901.94569.shtml
+const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.94569.json";
 
 pub struct Client {}
 
