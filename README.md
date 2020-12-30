@@ -1,9 +1,9 @@
 # bar
 
 This is a small Rust program that uses [unixbar] to generate some status info. It is used by
-[awesome] to show volume and battery level.
+[awesome] to show audio volume, battery level, and weather info.
 
-<img src="https://raw.githubusercontent.com/wezm/bar/master/screenshot.png" alt="Screen show of bar in action" width="101" />
+<img src="https://raw.githubusercontent.com/wezm/bar/master/screenshot.png" alt="Screen show of bar in action" width="351" />
 
 See my [rc.lua] for how it's used from awesome.
 
