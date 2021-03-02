@@ -4,7 +4,11 @@ use std::io;
 // Melbourne
 // const OBSERVATIONS_URL: &str = "http://reg.bom.gov.au/fwo/IDV60901/IDV60901.95936.json";
 // Sunshine Coast Airport http://www.bom.gov.au/products/IDQ60901/IDQ60901.94569.shtml
-const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.94569.json";
+// const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.94569.json";
+// Beerburrum http://www.bom.gov.au/products/IDQ60901/IDQ60901.95566.shtml
+// const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.95566.json";
+// Nambour http://www.bom.gov.au/products/IDQ60901/IDQ60901.95572.shtml
+const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.95572.json";
 
 pub struct Client {}
 
