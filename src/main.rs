@@ -2,26 +2,19 @@ use std::env;
 use systemstat::{Platform, System};
 use unixbar::*;
 
+mod garage;
 mod weather;
 
+use crate::garage::{Door, DoorState};
 use crate::weather::Observation;
 
+#[derive(Default)]
 struct Config {
     audio: bool,
     battery: bool,
     weather: bool,
     cpu_temp: bool,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Config {
-            audio: false,
-            battery: false,
-            weather: false,
-            cpu_temp: false,
-        }
-    }
+    garage: bool,
 }
 
 impl Config {
@@ -34,6 +27,7 @@ impl Config {
                 "-b" => config.battery = true,
                 "-w" => config.weather = true,
                 "-c" => config.cpu_temp = true,
+                "-g" => config.garage = true,
                 _ => (),
             }
         }
@@ -88,7 +82,7 @@ fn main() {
                 .ok()
                 .and_then(|observations| observations.into_iter().nth(0));
 
-            bfmt![ pad[1] fmt["{}", format_observation(&observation)]]
+            bfmt![ pad[1] fmt["{}", format_observation(&observation)] ]
         }));
     }
 
@@ -100,6 +94,32 @@ fn main() {
                 Err(_) => bfmt![fg["#bb1155"] pad[1] text["cpu temp error"]],
             },
         ));
+    }
+
+    if config.garage {
+        bar.add(Periodic::new(Duration::from_secs(15), || {
+            let garage = garage::Client::new();
+
+            let door = garage.state().ok();
+
+            let emoji = match door {
+                Some(Door {
+                    state: DoorState::Open,
+                    ..
+                }) => "🪟",
+                Some(Door {
+                    state: DoorState::Closed,
+                    ..
+                }) => "🚪",
+                Some(Door {
+                    state: DoorState::Unknown,
+                    ..
+                }) => "🚪❓",
+                None => "🚪⁉️",
+            };
+
+            bfmt![ pad[1] fmt["{}", emoji] ]
+        }));
     }
 
     //     .register_fn("prev", move || { MPRISMusic::new().prev(); })
