@@ -9,5 +9,5 @@ ureq = { version = "1.5.0", default-features = false, features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 systemstat = "0.1"
-unixbar = { git = "https://github.com/wezm/unixbar.git", branch = "awesome", features = ["awesome"] }
-#unixbar = { path = "../unixbar", features = ["awesome"] }
+unixbar = { git = "https://github.com/wezm/unixbar.git", branch = "awesome", default-features = false, features = ["awesome", "systemstat"] }
+#unixbar = { path = "../unixbar", features = ["awesome", "systemstat"], default-features = false }
