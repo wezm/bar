@@ -1,5 +1,7 @@
-use serde::Deserialize;
 use std::io;
+
+use serde::Deserialize;
+use serde_json::Value as JsonValue;
 
 // Melbourne
 // const OBSERVATIONS_URL: &str = "http://reg.bom.gov.au/fwo/IDV60901/IDV60901.95936.json";
@@ -19,7 +21,7 @@ struct ObservationsRaw {
 
 #[derive(Debug, Deserialize)]
 struct Observations {
-    data: Vec<Observation>,
+    data: Vec<JsonValue>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -84,15 +86,27 @@ impl Client {
         Client {}
     }
 
-    pub fn observations(&self) -> Result<Vec<Observation>, WeatherError> {
+    pub fn current_conditions(&self) -> Result<Observation, WeatherError> {
         let resp = ureq::get(OBSERVATIONS_URL)
             .timeout(std::time::Duration::from_secs(10))
             .call();
 
         if resp.ok() {
             resp.into_json_deserialize::<ObservationsRaw>()
-                .map(|obs| obs.observations.data)
                 .map_err(WeatherError::JsonError)
+                .and_then(|obs| {
+                    obs.observations.data.into_iter().next().ok_or_else(|| {
+                        WeatherError::JsonError(io::Error::new(
+                            io::ErrorKind::Other,
+                            "first row missig",
+                        ))
+                    })
+                })
+                .and_then(|value| {
+                    serde_json::from_value::<Observation>(value).map_err(|err| {
+                        WeatherError::JsonError(io::Error::new(io::ErrorKind::Other, err))
+                    })
+                })
         } else {
             Err(WeatherError::HttpError)
         }

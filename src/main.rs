@@ -77,10 +77,7 @@ fn main() {
         bar.add(Periodic::new(Duration::from_secs(5 * 60), || {
             let weather = weather::Client::new();
 
-            let observation = weather
-                .observations()
-                .ok()
-                .and_then(|observations| observations.into_iter().nth(0));
+            let observation = weather.current_conditions().ok();
 
             bfmt![ pad[1] fmt["{}", format_observation(&observation)] ]
         }));
