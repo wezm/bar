@@ -91,24 +91,23 @@ impl Client {
             .timeout(std::time::Duration::from_secs(10))
             .call();
 
-        if resp.ok() {
-            resp.into_json_deserialize::<ObservationsRaw>()
-                .map_err(WeatherError::JsonError)
-                .and_then(|obs| {
-                    obs.observations.data.into_iter().next().ok_or_else(|| {
-                        WeatherError::JsonError(io::Error::new(
-                            io::ErrorKind::Other,
-                            "first row missig",
-                        ))
+        resp.map_err(|_err| WeatherError::HttpError)
+            .and_then(|resp| {
+                resp.into_json::<ObservationsRaw>()
+                    .map_err(WeatherError::JsonError)
+                    .and_then(|obs| {
+                        obs.observations.data.into_iter().next().ok_or_else(|| {
+                            WeatherError::JsonError(io::Error::new(
+                                io::ErrorKind::Other,
+                                "first row missig",
+                            ))
+                        })
                     })
-                })
-                .and_then(|value| {
-                    serde_json::from_value::<Observation>(value).map_err(|err| {
-                        WeatherError::JsonError(io::Error::new(io::ErrorKind::Other, err))
+                    .and_then(|value| {
+                        serde_json::from_value::<Observation>(value).map_err(|err| {
+                            WeatherError::JsonError(io::Error::new(io::ErrorKind::Other, err))
+                        })
                     })
-                })
-        } else {
-            Err(WeatherError::HttpError)
-        }
+            })
     }
 }

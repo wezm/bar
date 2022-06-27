@@ -12,6 +12,7 @@ pub struct Client {}
 //  "open_for": null
 //}
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub struct Door {
     pub state: DoorState,
@@ -36,11 +37,7 @@ impl Client {
             .timeout(std::time::Duration::from_secs(10))
             .call();
 
-        if resp.ok() {
-            resp.into_json_deserialize::<Door>()
-                .map_err(WeatherError::JsonError)
-        } else {
-            Err(WeatherError::HttpError)
-        }
+        resp.map_err(|_err| WeatherError::HttpError)
+            .and_then(|resp| resp.into_json::<Door>().map_err(WeatherError::JsonError))
     }
 }
