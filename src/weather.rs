@@ -8,7 +8,7 @@ use serde_json::Value as JsonValue;
 // Sunshine Coast Airport http://www.bom.gov.au/products/IDQ60901/IDQ60901.94569.shtml
 // const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.94569.json";
 // Beerburrum http://www.bom.gov.au/products/IDQ60901/IDQ60901.95566.shtml
-const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.95566.json";
+const OBSERVATIONS_URL: &str = "https://www.bom.gov.au/fwo/IDQ60901/IDQ60901.95566.json";
 // Nambour http://www.bom.gov.au/products/IDQ60901/IDQ60901.95572.shtml
 // const OBSERVATIONS_URL: &str = "http://www.bom.gov.au/fwo/IDQ60901/IDQ60901.95572.json";
 
