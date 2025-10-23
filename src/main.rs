@@ -181,10 +181,10 @@ fn main() {
 pub fn format_observation(observation: &Option<Observation>) -> String {
     if let Some(o) = observation {
         format!(
-            "🌡{}°c ({}°c)  🌧 ️{}mm  💧{}°c  🌫 ️{}%  🛩 ️{}km/h",
+            "🌡\u{FE0F}{}°c ({}°c)  🌧\u{FE0F}{}mm  💧\u{FE0F}{}°c  🌫{}%  🛩\u{FE0F}{}km/h",
             o.air_temp, o.apparent_t, o.rain_trace, o.dewpt, o.rel_hum, o.wind_spd_kmh
         )
     } else {
-        format!("🌡 --")
+        format!("🌡\u{FE0F} --")
     }
 }
